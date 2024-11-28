@@ -1,0 +1,11 @@
+.form-control {
+  @apply w-full mb-3 placeholder:text-green-600;
+
+  .form-control-label {
+    @apply capitalize text-blue-600;
+  }
+
+  .form-control-error {
+    @apply text-red-500 mt-1 font-medium text-sm capitalize;
+  }
+}

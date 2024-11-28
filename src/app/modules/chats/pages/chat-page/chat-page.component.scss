@@ -1,0 +1,21 @@
+.chat-container {
+  //   @apply bg-red-500;
+  background-color: #f7f7f7;
+  @apply h-[calc(100vh-60px)] flex justify-center items-center p-1 md:p-3;
+  .content {
+    @apply bg-white border p-4 rounded-md shadow-lg;
+    @apply w-full h-full max-w-7xl;
+    @apply grid grid-cols-12 gap-x-3 overflow-y-scroll;
+
+    .chats-list {
+      // @apply bg-yellow-500;
+      @apply col-span-4;
+      @apply border-r max-h-full overflow-hidden;
+    }
+
+    .chat-window {
+      // @apply bg-blue-500;
+      @apply col-span-8;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+#chat-window {
+  @apply flex flex-col justify-between items-stretch  h-full;
+}
+
+.messages {
+  @apply h-[50vh] overflow-y-scroll pt-3   flex-grow;
+}
+.message-box {
+  @apply w-fit flex flex-row justify-start items-end gap-3 p-2 rounded-md mb-3 max-w-[50%];
+
+  span {
+    @apply text-xs block min-w-max text-[#DDD];
+    direction: ltr;
+  }
+
+  .message {
+    @apply max-w-full;
+  }
+
+  &.sender {
+    @apply me-auto bg-blue-600 text-white;
+  }
+
+  &.receiver {
+    @apply bg-neutral-600 ms-auto text-white;
+  }
+}

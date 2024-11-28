@@ -1,0 +1,37 @@
+<!--* ================ G L O B A L  F O R M  F I E L D  ================ -->
+<div class="form-control" *ngIf="control">
+    <!--* ================ L A B E L  ================ -->
+    <label [for]="inputId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        {{label}}
+        <span *ngIf="required" class="text-red-600">*</span>
+    </label>
+
+    <!--* ================ I N P U T  ================ -->
+    <input type="text" [id]="inputId"
+        class="bg-gray-50 outline-none border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        [placeholder]="placeholder" [type]="type" [id]="inputId" [placeholder]="placeholder" [formControl]="control"
+        [min]="type === 'number' ? minValue : null" [max]="type === 'number' ? maxValue : null" />
+
+    <!--* ================ E R R O R S ================ -->
+    <ng-container *ngIf="control.touched">
+        <!--* ================ R E Q U I R E D   E R R O R ================ -->
+        <p class="form-control-error" *ngIf="required && checkFormControlError(control, 'required')">
+            {{label}} is required
+        </p>
+
+        <!--* ================ E M A I L   E R R O R ================ -->
+        <p class="form-control-error" *ngIf="type=='email' && checkFormControlError(control, 'email')">
+            {{label}} is invalid
+        </p>
+
+        <!--* ================ P A T T E R N   E R R O R ================ -->
+        <p class="form-control-error" *ngIf="patternValidator && checkFormControlError(control, 'pattern')">
+            {{patternMsg || label}} is invalid
+        </p>
+
+        <!--* ================ M I N  L E N G T H   E R R O R ================ -->
+        <p class="form-control-error" *ngIf="minLength > 0 && checkFormControlError(control, 'minlength')">
+            {{label}} minimum length is {{minLength}}
+        </p>
+    </ng-container>
+</div>

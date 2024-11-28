@@ -1,0 +1,14 @@
+#chats-list {
+  @apply px-1;
+}
+
+.users {
+  @apply max-h-full h-full overflow-y-scroll;
+  .user {
+    @apply flex justify-start items-center gap-x-3 mb-3 last:mb-0 cursor-pointer hover:bg-slate-300;
+
+    &.active {
+      @apply bg-slate-300;
+    }
+  }
+}

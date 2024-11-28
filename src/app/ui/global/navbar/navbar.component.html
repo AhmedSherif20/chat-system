@@ -1,0 +1,15 @@
+<nav *ngIf="userInfo$|async as user">
+    <div class="container mx-auto flex flex-col sm:flex-row gap-y-1 sm:gap-y-0 justify-between items-center py-2">
+        <h2 class="text-xl capitalize">
+            welcome,
+            <span class=" font-medium">
+                {{user.email}}
+            </span>
+        </h2>
+
+        <button class="btn-black btn-sm" (click)="userLogout()">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            logout
+        </button>
+    </div>
+</nav>
