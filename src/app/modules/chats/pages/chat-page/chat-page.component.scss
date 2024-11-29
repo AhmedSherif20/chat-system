@@ -3,19 +3,23 @@
   background-color: #f7f7f7;
   @apply h-[calc(100vh-60px)] flex justify-center items-center p-1 md:p-3;
   .content {
-    @apply bg-white border p-4 rounded-md shadow-lg;
+    @apply bg-white border p-4 rounded-md shadow-lg relative;
     @apply w-full h-full max-w-7xl;
-    @apply grid grid-cols-12 gap-x-3 overflow-y-scroll;
+    @apply grid grid-cols-12 gap-x-3 overflow-y-scroll overflow-x-hidden;
 
     .chats-list {
       // @apply bg-yellow-500;
-      @apply col-span-4;
+      @apply col-span-full md:col-span-4 absolute md:relative top-0 bottom-0 bg-white -translate-x-96 md:translate-x-0;
       @apply border-r max-h-full overflow-hidden;
+
+      &.show {
+        @apply -translate-x-4 md:translate-x-0;
+      }
     }
 
     .chat-window {
       // @apply bg-blue-500;
-      @apply col-span-8;
+      @apply col-span-full md:col-span-8;
     }
   }
 }

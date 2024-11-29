@@ -55,15 +55,11 @@ export class RegisterComponent {
       }
     }
 
-    console.log(registerData);
-
     this.loading = true;
 
     const registerResponse = await firstValueFrom(
       this.authApiService.register(apiRequestBody)
     );
-
-    console.log(registerResponse);
 
     const { isSuccess, token, errors } = registerResponse;
 

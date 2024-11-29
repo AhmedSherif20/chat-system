@@ -1,17 +1,18 @@
 import {
   Component,
+  EventEmitter,
   HostListener,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
 } from '@angular/core';
 import { UserStateService } from '../../../../services/user state/user-state.service';
 import { User } from '../../../../interfaces/User';
-import { MessagesService } from '../../services/messages/messages.service';
+import { SignalRService } from '../../services/signal-r/signal-r.service';
 import { firstValueFrom, Observable } from 'rxjs';
 import { Message } from '../../interfaces/Message';
-import { NotificationsService } from '../../services/notifications/notifications.service';
 
 @Component({
   selector: 'app-chat-window',
@@ -20,15 +21,18 @@ import { NotificationsService } from '../../services/notifications/notifications
 })
 export class ChatWindowComponent implements OnInit, OnChanges {
   private userStateService: UserStateService = inject(UserStateService);
-  private messagesService: MessagesService = inject(MessagesService);
+  private signalRService: SignalRService = inject(SignalRService);
 
   @Input() selectedUser: { id: string; userName: string } | null = null;
+  @Output() showChatsList: EventEmitter<boolean> = new EventEmitter<boolean>(
+    false
+  );
 
   senderInfo: User | null = this.userStateService.getUserFromStorage();
 
   receiverId: string = ``;
   senderId: string = ``;
-  messages$: Observable<Message[]> = this.messagesService.messages$;
+  messages$: Observable<Message[]> = this.signalRService.messages$;
 
   newMessage: string = '';
 
@@ -42,9 +46,6 @@ export class ChatWindowComponent implements OnInit, OnChanges {
 
   async initChat() {
     if (this.selectedUser && this.senderInfo) {
-      console.log(this.selectedUser);
-      console.log(this.senderInfo);
-
       this.receiverId = this.selectedUser.id;
       this.senderId = this.senderInfo.id;
       await this.getChatMessages();
@@ -54,14 +55,13 @@ export class ChatWindowComponent implements OnInit, OnChanges {
   async getChatMessages(): Promise<void> {
     this.loading = true;
     const messagesResponse = await firstValueFrom(
-      this.messagesService.getMessages(
+      this.signalRService.getMessages(
         this.receiverId,
         this.senderInfo?.token ?? ''
       )
     );
 
-    this.messagesService.scrollDown();
-    console.log(messagesResponse);
+    this.signalRService.scrollDown();
 
     this.loading = false;
   }
@@ -74,13 +74,17 @@ export class ChatWindowComponent implements OnInit, OnChanges {
   async sendMessage() {
     if (this.newMessage.trim() && this.selectedUser) {
       const message: string = this.newMessage.trim();
-      await this.messagesService.sendMessage(
+      await this.signalRService.sendMessage(
         this.senderInfo?.id ?? '',
         this.selectedUser.id,
         message
       );
-      await this.messagesService.sendNotification(this.receiverId, message);
+      await this.signalRService.sendNotification(this.receiverId, message);
       this.newMessage = '';
     }
+  }
+
+  showChats() {
+    this.showChatsList.emit(true);
   }
 }

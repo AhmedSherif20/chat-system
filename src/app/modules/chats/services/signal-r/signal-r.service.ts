@@ -9,16 +9,17 @@ import { Message } from '../../interfaces/Message';
 @Injectable({
   providedIn: 'root',
 })
-export class MessagesService {
+export class SignalRService {
   private http: HttpClient = inject(HttpClient);
   private baseUrl = Vars.baseUrl;
-  private hubConnection: signalR.HubConnection =
-    new signalR.HubConnectionBuilder()
-      .withUrl(`${this.baseUrl}/videocallhub`)
-      .build();
+  private hubConnection: signalR.HubConnection;
 
   private messagesSubject = new BehaviorSubject<Message[]>([]);
   messages$: Observable<Message[]> = this.messagesSubject.asObservable();
+
+  private receivedSignalSubject = new BehaviorSubject<string | null>(null);
+  receivedSignal$: Observable<string | null> =
+    this.receivedSignalSubject.asObservable();
 
   /**
    * Fetches messages for a given receiver ID.
@@ -62,7 +63,7 @@ export class MessagesService {
 
     await this.hubConnection
       .start()
-      .then(() => console.log('connection established'))
+      // .then(() => console.log('connection established'))
       .catch((err) =>
         console.error('Error while establishing connection: ', err)
       );
@@ -73,7 +74,7 @@ export class MessagesService {
     receiverId: string,
     message: string
   ): Promise<void> {
-    console.log('Sending to:', receiverId, 'Message:', message);
+    // console.log('Sending to:', receiverId, 'Message:', message);
     await this.hubConnection
       .invoke('SendMessage', receiverId, message)
       .then(() =>
@@ -88,31 +89,18 @@ export class MessagesService {
       .catch((err) => console.error('Error while sending message: ', err));
   }
 
-  async sendNotification(userId: string, message: string): Promise<void> {
-    if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
-      await this.hubConnection
-        .invoke('SendNotification', userId, message)
-        .then((res) => console.log(res))
-        .catch((err) =>
-          console.error('Error while sending notification: ', err)
-        );
-    } else {
-      console.log('no hub connection');
-    }
-  }
-
   async onReceiveMessage(): Promise<void> {
-    console.log('onReceiveMessage');
+    // console.log('onReceiveMessage');
 
     if (this.hubConnection) {
       this.hubConnection.on('ReceiveMessage', (message) => {
-        console.log('onReceiveMessage onhub');
-        console.log(message);
+        // console.log('onReceiveMessage onhub');
+        // console.log(message);
 
         this.addMessage(message);
       });
     } else {
-      console.log('no hub connection');
+      // console.log('no hub connection');
     }
   }
 
@@ -139,6 +127,46 @@ export class MessagesService {
           behavior: 'smooth',
         });
       }, 0);
+    }
+  }
+
+  listenToNotifications(): void {
+    // console.log(`ReceiveNotification working! outside hub`);
+
+    this.hubConnection.on('ReceiveNotification', (message: string) => {
+      // console.log(`ReceiveNotification working!`);
+      // console.log(message);
+    });
+  }
+
+  sendNotification(userId: string, message: string): void {
+    this.hubConnection
+      .invoke('SendNotification', userId, message)
+      // .then((res) => console.log(res))
+      .catch((err) => console.error('Error while sending notification: ', err));
+  }
+
+  sendGlobalNotification(message: string): void {
+    this.hubConnection
+      .invoke('SendGlobalNotification', message)
+      .catch((err) =>
+        console.error('Error while sending global notification: ', err)
+      );
+  }
+
+  async sendSignal(receiverId: string, signal: string) {
+    await this.hubConnection
+      .invoke('SendSignal', receiverId, signal)
+      .catch((err) => console.error('Error sending signal: ', err));
+  }
+
+  listenForSignals() {
+    if (this.hubConnection) {
+      this.hubConnection.on('ReceiveSignal', (signal: string) => {
+        this.receivedSignalSubject.next(signal);
+      });
+    } else {
+      console.error('SignalR connection is not established.');
     }
   }
 }

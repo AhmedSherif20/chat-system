@@ -1,0 +1,17 @@
+<button class="btn-green btn-sm" (click)="startVideoChat()">
+    <i class="fa-solid fa-video !me-0 !sm:me-1"></i>
+    <span class="hidden sm:inline">
+        Start Video Call
+    </span>
+</button>
+
+<div class="video-call-wrapper" *ngIf="isStartVideoCall">
+    <video #localVideo autoplay muted></video>
+    <video #remoteVideo autoplay></video>
+    <div class="w-full">
+        <button class="btn-red mx-auto block" (click)="closeVideoChat()">
+            <i class="fa-solid fa-video-slash"></i>
+            End Call
+        </button>
+    </div>
+</div>

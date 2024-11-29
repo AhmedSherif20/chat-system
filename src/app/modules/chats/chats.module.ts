@@ -7,9 +7,15 @@ import { ChatWindowComponent } from './components/chat-window/chat-window.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChatPageComponent } from './pages/chat-page/chat-page.component';
 import { NavbarComponent } from '../../ui/global/navbar/navbar.component';
+import { VideoCallComponent } from './components/video-call/video-call.component';
 
 @NgModule({
-  declarations: [ChatsListComponent, ChatWindowComponent, ChatPageComponent],
+  declarations: [
+    ChatsListComponent,
+    ChatWindowComponent,
+    ChatPageComponent,
+    VideoCallComponent,
+  ],
   imports: [
     CommonModule,
     ChatsRoutingModule,

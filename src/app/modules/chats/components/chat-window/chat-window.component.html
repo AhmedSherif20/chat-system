@@ -1,6 +1,9 @@
 <section id="chat-window">
     <ng-container *ngIf="selectedUser">
         <div class="header flex justify-start items-center gap-x-3 border-b pb-2">
+            <button class="btn-black btn-iconic md:hidden" (click)="showChats()">
+                <i class="fa-solid fa-bars "></i>
+            </button>
             <div class="chat-img w-10 h-10 rounded-full overflow-hidden">
                 <img src="https://placehold.co/40x40" class="object-cover object-center w-full h-full"
                     [alt]="selectedUser.userName" [title]="selectedUser.userName">
@@ -9,6 +12,9 @@
                 {{selectedUser.userName}}
             </p>
 
+            <div class="ms-auto">
+                <app-video-call [receiverId]="selectedUser.id"></app-video-call>
+            </div>
 
         </div>
 
@@ -22,13 +28,21 @@
             </ng-container>
             <ng-container *ngIf="!loading">
                 <ng-container *ngFor="let message of messages">
-                    <div class="message-box"
-                        *ngIf="(message.receiverId === receiverId && message.senderId === senderId) || (message.receiverId === senderId && message.senderId === receiverId)"
-                        [ngClass]="senderInfo?.id === message.receiverId ? 'sender' : 'receiver'">
-                        <p class="message">
-                            {{message.message}}
-                        </p>
-                        <span>{{message.timestamp | date: 'h:mm a'}}</span>
+
+                    <div class="flex justify-start items-center gap-2 mb-3">
+                        <div class="message-img w-9 h-9 rounded-full overflow-hidden"
+                            *ngIf="message.senderId === receiverId">
+                            <img src="https://placehold.co/36x36" class="object-cover object-center w-full h-full"
+                                [alt]="selectedUser.userName" [title]="selectedUser.userName">
+                        </div>
+                        <div class="message-box"
+                            *ngIf="(message.receiverId === receiverId && message.senderId === senderId) || (message.receiverId === senderId && message.senderId === receiverId)"
+                            [ngClass]="senderInfo?.id === message.receiverId ? 'sender' : 'receiver'">
+                            <p class="message">
+                                {{message.message}}
+                            </p>
+                            <span>{{message.timestamp | date: 'h:mm a'}}</span>
+                        </div>
                     </div>
                 </ng-container>
             </ng-container>
@@ -55,8 +69,12 @@
     </ng-container>
     <ng-container *ngIf="!selectedUser">
         <div class="no-user-selected  w-full h-full flex justify-start items-center flex-col">
-            <img src="../../../../../assets/imgs/messages-bg.webp" class="max-w-lg" loading="lazy">
-            <h2 class=" capitalize text-2xl tracking-wide">👉 Click on a username to begin your conversation!</h2>
+            <img src="../../../../../assets/imgs/messages-bg.webp" class="max-w-xs md:max-w-lg" loading="lazy">
+            <h2 class=" capitalize mb-3 text-lg md:text-2xl tracking-wide text-center hidden sm:block">👉 Click on a
+                username to begin
+                your
+                conversation!</h2>
+            <button class="btn-black btn-lg md:hidden" (click)="showChats()">show chats</button>
         </div>
     </ng-container>
 </section>

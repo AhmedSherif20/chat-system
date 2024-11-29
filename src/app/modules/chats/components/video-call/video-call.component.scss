@@ -1,0 +1,7 @@
+.video-call-wrapper {
+  @apply fixed inset-0 bg-black bg-opacity-80 z-[99999] flex justify-center items-center flex-wrap gap-5;
+
+  video {
+    @apply w-[40%] border;
+  }
+}

@@ -19,6 +19,10 @@ export class ChatsListComponent implements OnInit {
   private userStateService: UserStateService = inject(UserStateService);
   private sweetAlertService: SweetAlertService = inject(SweetAlertService);
 
+  @Output() HideChatsList: EventEmitter<boolean> = new EventEmitter<boolean>(
+    false
+  );
+
   loading: boolean = false;
 
   allUsers: ShortUserInfo[] = [];
@@ -73,5 +77,10 @@ export class ChatsListComponent implements OnInit {
     console.log(user);
     this.selectedUserId = user.id;
     this.selectedUser.emit(user);
+    this.hideChats();
+  }
+
+  hideChats() {
+    this.HideChatsList.emit(false);
   }
 }

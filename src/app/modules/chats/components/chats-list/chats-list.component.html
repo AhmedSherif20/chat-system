@@ -1,7 +1,11 @@
 <section id="chats-list" class=" h-full">
-    <h2 class="mb-3 text-3xl border-b pb-3">Chats</h2>
 
-
+    <div class="flex justify-between items-center mb-3 pt-2 md:pt-0 pb-3 border-b">
+        <h2 class=" text-3xl">Chats</h2>
+        <button class="btn btn-black btn-xs btn-iconic md:hidden" (click)="hideChats()">
+            <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+    </div>
     <ng-container *ngIf="loading">
         <div class="loading  w-full h-1/2 flex justify-center items-center flex-col text-4xl gap-y-3">
             <i class="fa-solid fa-spinner animate-spin "></i>
