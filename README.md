@@ -38,3 +38,23 @@ Follow these steps to set up and run the application locally.
    git clone https://github.com/yourusername/chatting-system.git
    cd chatting-system
    ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Run the application**:
+
+   ```bash
+   npm start
+   ```
+
+## Project Structure
+
+- `src/app`: Contains the main components, services, and other modules.
+  - `components`: Reusable UI components (e.g., Video Chat, Message, etc.).
+  - `services`: Logic for handling real-time communication with SignalR and other utilities.
+  - `models`: TypeScript interfaces and models for app data.
+  - `shared`: Shared utilities, filters, pipes, or components.
