@@ -6,6 +6,11 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { GetChatMessagesResponse } from '../../interfaces/GetChatMessagesReponse';
 import { Message } from '../../interfaces/Message';
 
+/**
+ * A service to manage SignalR connections, real-time messaging, and notifications.
+ * This service provides functionality to establish SignalR connections,
+ * send and receive messages, and handle notifications in a chat application.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -15,17 +20,24 @@ export class SignalRService {
   private hubConnection: signalR.HubConnection;
 
   private messagesSubject = new BehaviorSubject<Message[]>([]);
+  /**
+   * Observable stream for chat messages.
+   */
   messages$: Observable<Message[]> = this.messagesSubject.asObservable();
 
   private receivedSignalSubject = new BehaviorSubject<string | null>(null);
+  /**
+   * Observable stream for received signals.
+   */
   receivedSignal$: Observable<string | null> =
     this.receivedSignalSubject.asObservable();
 
   /**
    * Fetches messages for a given receiver ID.
-   * @param receiverId The ID of the receiver.
-   * @param token The Bearer token for authorization.
-   * @returns An Observable containing the list of messages.
+   *
+   * @param receiverId - The ID of the receiver to fetch messages for.
+   * @param token - The Bearer token for authorization.
+   * @returns An `Observable` emitting the response containing the list of messages.
    */
   getMessages(
     receiverId: string,
@@ -55,6 +67,12 @@ export class SignalRService {
       );
   }
 
+  /**
+   * Starts a SignalR connection for a specified user.
+   *
+   * @param userId - The ID of the user initiating the connection.
+   * @returns A promise that resolves when the connection is established.
+   */
   async startConnection(userId: string): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/videocallhub?userId=${userId}`)
@@ -63,18 +81,24 @@ export class SignalRService {
 
     await this.hubConnection
       .start()
-      // .then(() => console.log('connection established'))
       .catch((err) =>
         console.error('Error while establishing connection: ', err)
       );
   }
 
+  /**
+   * Sends a chat message to a specified receiver.
+   *
+   * @param senderId - The ID of the sender.
+   * @param receiverId - The ID of the receiver.
+   * @param message - The message content.
+   * @returns A promise that resolves when the message is sent.
+   */
   async sendMessage(
     senderId: string,
     receiverId: string,
     message: string
   ): Promise<void> {
-    // console.log('Sending to:', receiverId, 'Message:', message);
     await this.hubConnection
       .invoke('SendMessage', receiverId, message)
       .then(() =>
@@ -89,24 +113,23 @@ export class SignalRService {
       .catch((err) => console.error('Error while sending message: ', err));
   }
 
+  /**
+   * Listens for incoming messages via SignalR and updates the messages list.
+   */
   async onReceiveMessage(): Promise<void> {
-    // console.log('onReceiveMessage');
-
     if (this.hubConnection) {
       this.hubConnection.on('ReceiveMessage', (message) => {
-        // console.log('onReceiveMessage onhub');
-        // console.log(message);
-
         this.addMessage(message);
       });
     } else {
-      // console.log('no hub connection');
+      console.error('SignalR connection is not established.');
     }
   }
 
   /**
-   * Adds a new message to the local messages list.
-   * @param message The message content.
+   * Adds a new message to the local message list.
+   *
+   * @param message - The message content to add.
    */
   private addMessage(message: Message): void {
     const currentMessages = this.messagesSubject.value;
@@ -117,6 +140,9 @@ export class SignalRService {
     }, 100);
   }
 
+  /**
+   * Automatically scrolls the chat view to the latest message.
+   */
   scrollDown(): void {
     const container = document.getElementById('messages');
 
@@ -130,22 +156,32 @@ export class SignalRService {
     }
   }
 
+  /**
+   * Listens for incoming notifications via SignalR.
+   */
   listenToNotifications(): void {
-    // console.log(`ReceiveNotification working! outside hub`);
-
     this.hubConnection.on('ReceiveNotification', (message: string) => {
-      // console.log(`ReceiveNotification working!`);
-      // console.log(message);
+      console.log(`Notification received: ${message}`);
     });
   }
 
+  /**
+   * Sends a notification to a specific user.
+   *
+   * @param userId - The ID of the user to receive the notification.
+   * @param message - The notification message.
+   */
   sendNotification(userId: string, message: string): void {
     this.hubConnection
       .invoke('SendNotification', userId, message)
-      // .then((res) => console.log(res))
       .catch((err) => console.error('Error while sending notification: ', err));
   }
 
+  /**
+   * Sends a global notification to all connected clients.
+   *
+   * @param message - The notification message.
+   */
   sendGlobalNotification(message: string): void {
     this.hubConnection
       .invoke('SendGlobalNotification', message)
@@ -154,13 +190,23 @@ export class SignalRService {
       );
   }
 
-  async sendSignal(receiverId: string, signal: string) {
+  /**
+   * Sends a SignalR signal to a specific receiver.
+   *
+   * @param receiverId - The ID of the receiver.
+   * @param signal - The signal data to send.
+   * @returns A promise that resolves when the signal is sent.
+   */
+  async sendSignal(receiverId: string, signal: string): Promise<void> {
     await this.hubConnection
       .invoke('SendSignal', receiverId, signal)
       .catch((err) => console.error('Error sending signal: ', err));
   }
 
-  listenForSignals() {
+  /**
+   * Listens for incoming SignalR signals.
+   */
+  listenForSignals(): void {
     if (this.hubConnection) {
       this.hubConnection.on('ReceiveSignal', (signal: string) => {
         this.receivedSignalSubject.next(signal);

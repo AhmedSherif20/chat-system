@@ -1,27 +1,40 @@
-# ChattingSystem
+# Chatting System
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.5.
+A real-time chatting application built with Angular and SignalR for seamless video chat, messaging, and notification features. The app integrates a responsive UI with real-time communication, designed to offer an easy-to-use and interactive experience.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Real-time Communication**: Uses SignalR for real-time bidirectional communication.
+- **Video Chat**: Peer-to-peer video calling using WebRTC.
+- **Message Notifications**: SweetAlert2 integration for notification and alerting purposes.
+- **Cross-Browser Compatibility**: Compatible with modern web browsers that support WebRTC and SignalR.
+- **Responsive UI**: The application is fully responsive, providing an optimized experience on both desktop and mobile devices.
 
-## Code scaffolding
+## Technology Stack
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Frontend**: Angular 18.x
+- **Real-time Communication**: SignalR
+- **Video Communication**: WebRTC
+- **UI**: TailwindCSS for styling, FontAwesome for icons
+- **Alerting**: SweetAlert2 for notifications
+- **State Management**: RxJS for managing reactive streams
+- **Browser Support**: Modern browsers supporting WebRTC and SignalR
 
-## Build
+## Requirements
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Before running the application, ensure you have the following installed:
 
-## Running unit tests
+- **Node.js**: v18.x or later
+- **Angular CLI**: v18.x or later
+- **npm**: v8.x or later
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Installation
 
-## Running end-to-end tests
+Follow these steps to set up and run the application locally.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+1. **Clone the repository**:
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+   ```bash
+   git clone https://github.com/yourusername/chatting-system.git
+   cd chatting-system
+   ```

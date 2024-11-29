@@ -1,3 +1,7 @@
+/**
+ * Component for handling video call functionality.
+ * Manages peer-to-peer connections, video and audio streams, and SignalR communication for real-time signaling.
+ */
 import {
   Component,
   ElementRef,
@@ -17,19 +21,39 @@ import { SweetAlertService } from '../../../../services/sweet alert/sweet-alert.
   styleUrl: './video-call.component.scss',
 })
 export class VideoCallComponent implements OnInit, OnDestroy {
+  /** SignalR service for managing real-time signaling for video calls. */
   private signalRService: SignalRService = inject(SignalRService);
+
+  /** Service for displaying alerts and notifications during video calls. */
   private sweetAlertService: SweetAlertService = inject(SweetAlertService);
 
+  /** Reference to the local video element for displaying the user's video stream. */
   @ViewChild('localVideo') localVideo!: ElementRef<HTMLVideoElement>;
+
+  /** Reference to the remote video element for displaying the remote user's video stream. */
   @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>;
 
+  /**
+   * The ID of the receiver (the user on the other end of the call).
+   */
   @Input() receiverId: string = ``;
 
+  /** Peer-to-peer connection for managing WebRTC interactions. */
   private peerConnection!: RTCPeerConnection;
+
+  /** Media stream for the local user's video and audio. */
   private localStream!: MediaStream;
+
+  /** Subscription object for managing SignalR event subscriptions. */
   private subs: Subscription = new Subscription();
+
+  /** Indicates whether a video call has started. */
   isStartVideoCall: boolean = false;
 
+  /**
+   * Lifecycle hook that is triggered when the component is initialized.
+   * Sets up SignalR listeners and subscribes to received signals.
+   */
   ngOnInit(): void {
     this.signalRService.listenForSignals();
     this.subs.add(
@@ -41,14 +65,23 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Checks whether video chat can be started.
+   * Video chat is only allowed at specific times (3:00 AM and 3:00 PM).
+   *
+   * @returns `true` if video chat is allowed, otherwise `false`.
+   */
   canStartVideoChat(): boolean {
     const currentTime = new Date();
     const hours = currentTime.getHours();
-    // return hours === 3 || hours === 15;
-    return true;
+    return hours === 3 || hours === 15;
   }
 
-  async startVideoChat() {
+  /**
+   * Starts the video chat by initializing local media streams and setting up WebRTC peer connections.
+   * Sends the SDP offer to the receiver via SignalR.
+   */
+  async startVideoChat(): Promise<void> {
     if (!this.canStartVideoChat()) {
       this.sweetAlertService.showAlert({
         icon: 'info',
@@ -59,7 +92,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.isStartVideoCall = true;
 
-    // تحقق من دعم getUserMedia
+    // Check for browser support
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       this.sweetAlertService.showAlert({
         icon: 'warning',
@@ -106,7 +139,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  async handleSignal(signal: string) {
+  /**
+   * Handles incoming signaling data from SignalR.
+   * Processes SDP offers/answers and ICE candidates.
+   *
+   * @param signal The signaling data received from the server.
+   */
+  async handleSignal(signal: string): Promise<void> {
     const parsedSignal = JSON.parse(signal);
 
     if (parsedSignal.type === 'callEnded') {
@@ -128,7 +167,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeVideoChat() {
+  /**
+   * Ends the video call by stopping media streams, closing the peer connection, and resetting the UI.
+   * Displays a toast notification to indicate the call has ended.
+   */
+  closeVideoChat(): void {
     // Stop all tracks in the local stream
     if (this.localStream) {
       this.localStream.getTracks().forEach((track) => track.stop());
@@ -157,6 +200,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Lifecycle hook that is triggered when the component is destroyed.
+   * Unsubscribes from SignalR subscriptions to prevent memory leaks.
+   */
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
