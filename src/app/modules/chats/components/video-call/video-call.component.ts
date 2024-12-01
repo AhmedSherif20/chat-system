@@ -74,7 +74,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   canStartVideoChat(): boolean {
     const currentTime = new Date();
     const hours = currentTime.getHours();
-    return hours === 3 || hours === 15;
+    // return hours === 3 || hours === 15;
+    return true;
   }
 
   /**
